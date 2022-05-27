@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from datetime import datetime
 import string
+import random
 
 db = SQLAlchemy()
 
@@ -48,6 +49,7 @@ class Bookmark(db.Model):
         self.url = url
         self.body = body
         self.user_id = user_id
+        self.short_url = self.generate_short_characters()
 
     def __repr__(self) -> str:
-        return f'Bookmark>>> {self.url}'
+        return f'Bookmark>>> {self.url} Short URL>>> {self.short_url}'
