@@ -124,3 +124,19 @@ def update_bookmark(id):
             'created_at': bookmark.created_at,
             'updated_at': bookmark.updated_at,
         }), HTTPStatus.OK)
+
+@bookmarks.delete("/<int:id>")
+@jwt_required()
+def delete_bookmark(id):
+    current_user = get_jwt_identity()
+
+    bookmark = Bookmark.query.filter_by(
+                              user_id=current_user, id=id).first()
+
+    if not bookmark:
+        return (jsonify({'message': "Bookmark not found"}), HTTPStatus.NOT_FOUND)
+
+    db.session.delete(bookmark)
+    db.session.commit()
+
+    return(jsonify({}), HTTPStatus.NO_CONTENT)

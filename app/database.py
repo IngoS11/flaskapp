@@ -15,8 +15,7 @@ class User(db.Model):
     updated_at = Column(DateTime, onupdate=datetime.now())
     bookmarks = db.relationship('Bookmark', backref="users")
 
-    def __init__(self, username, email, password, **kwargs):
-        super.__init__(self, **kwargs)
+    def __init__(self, username, email, password):
         self.username = username
         self.email = email
         self.password = password
@@ -45,8 +44,7 @@ class Bookmark(db.Model):
         else:
             return picked_chars
 
-    def __init__(self, url, body, user_id, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, url, body, user_id):
         self.url = url
         self.body = body
         self.user_id = user_id
