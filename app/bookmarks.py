@@ -9,7 +9,6 @@ bookmarks = Blueprint("bookmarks", __name__, url_prefix="/api/v1/bookmarks")
 @bookmarks.route('/', methods=['GET', 'POST'])
 @jwt_required()
 def handle_bookmark():
-
     current_user = get_jwt_identity()
     
     if request.method == 'POST':
@@ -140,3 +139,23 @@ def delete_bookmark(id):
     db.session.commit()
 
     return(jsonify({}), HTTPStatus.NO_CONTENT)
+
+@bookmarks.get("/stats")
+@jwt_required()
+def get_stats():
+    current_user = get_jwt_identity()
+
+    data = []
+
+    items = Bookmark.query.filter_by(user_id=current_user).all()
+
+    for item in items:
+        new_link={
+            'visits': item.visits,
+            'url': item.url,
+            'id': item.id,
+            'short_url': item.short_url,
+        }
+        data.append(new_link)
+
+    return (jsonify({'data': data}), HTTPStatus.OK)

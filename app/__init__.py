@@ -5,6 +5,7 @@ from app.bookmarks import bookmarks
 from app.database import db
 from flask_jwt_extended import JWTManager
 from app.database import Bookmark
+from http import HTTPStatus
 
 def create_app(test_config=None):
     app = Flask(__name__,
@@ -37,5 +38,13 @@ def create_app(test_config=None):
             db.session.commit()
 
         return redirect(bookmark.url)
+
+    @app.errorhandler(HTTPStatus.NOT_FOUND)
+    def handle_404(e):
+        return (jsonify({'error': "Not found"}), HTTPStatus.NOT_FOUND)
+
+    @app.errorhandler(HTTPStatus.INTERNAL_SERVER_ERROR)
+    def handle_404(e):
+        return (jsonify({'error': "Something went wrong, please try again"}), HTTPStatus.INTERNAL_SERVER_ERROR)
 
     return app
