@@ -1,0 +1,35 @@
+User Log in
+---
+tags:
+  - Authentication
+parameters:
+  - name: body
+    description: The body should contain the username email and password
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "username"
+        - "email"
+        - "password"
+      properties:
+        username:
+          type: "string"
+          example: "Maria1234"
+        email:
+          type: "email"
+          example: "user@gmail.com"
+        password:
+          type: "string"
+          format: password
+          example: "********"
+responses:
+  200:
+    description: When a user successfully logs in
+
+  400:
+    description: User fails to register due to bad request data
+
+  409:
+    description: The user or the email already exists in the system
