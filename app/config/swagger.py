@@ -2,18 +2,17 @@
 template = {
   "swagger": "2.0",
   "info": {
-    "title": "My API",
-    "description": "API for my data",
+    "title": "Bookmark Application API",
+    "description": "API for the bookmark demo application",
     "contact": {
-      "responsibleOrganization": "ME",
-      "responsibleDeveloper": "Me",
-      "email": "me@me.com",
-      "url": "www.me.com",
+      "responsibleOrganization": "",
+      "responsibleDeveloper": "",
+      "email": "",
+      "url": "",
     },
-    "termsOfService": "http://me.com/terms",
+    "termsOfService": "",
     "version": "0.0.1"
   },
-  "host": "mysite.com",   # overrides localhost:500
   "basePath": "/api/v1",  # base bash for blueprint registration
   "schemes": [
     "http",

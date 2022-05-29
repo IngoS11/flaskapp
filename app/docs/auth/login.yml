@@ -15,11 +15,11 @@ parameters:
       properties:
         email:
           type: "email"
-          example: "user@gmail.com"
+          example: "peter@neverland.org"
         password:
           type: "string"
           format: password
-          example: "********"
+          example: "abcd1234"
 responses:
   200:
     description: When a user successfully logs in
