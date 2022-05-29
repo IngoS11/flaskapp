@@ -1,5 +1,4 @@
-This endpoint redirects to the bookmarked URL by using the
-short url that was generated when adding the bookmark
+This endpoint redirects to the bookmarked URL by using the short url stored in the system
 ---
 tags:
   - Bookmarks

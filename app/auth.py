@@ -84,10 +84,9 @@ def login():
         'error':"Authentication failed"
     }), HTTPStatus.UNAUTHORIZED)
 
-@auth.get("/me")
-#@swag_from("./docs/auth/me.yml")
+@auth.get("/whoami")
 @jwt_required()
-def me():
+def whoami():
     user_id = get_jwt_identity()
     user = User.query.filter_by(id=user_id).first()
     return (jsonify({
@@ -96,7 +95,6 @@ def me():
     }), HTTPStatus.OK)
 
 @auth.get('/token/refresh')
-#@swag_from("./docs/auth/token_refresh.yml")
 @jwt_required(refresh=True)
 def refresh_user_token():
     identity = get_jwt_identity()

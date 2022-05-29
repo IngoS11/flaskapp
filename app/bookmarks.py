@@ -142,7 +142,6 @@ def delete_bookmark(id):
     return(jsonify({}), HTTPStatus.NO_CONTENT)
 
 @bookmarks.get("/stats")
-#@swag_from("./docs/bookmarks/stats.yml")
 @jwt_required()
 def get_stats():
     current_user = get_jwt_identity()
