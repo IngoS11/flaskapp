@@ -1,0 +1,16 @@
+This endpoint returns the information for a specific bookmark
+---
+tags:
+  - Bookmarks
+parameters:
+  - name: id
+    in: path
+    type: int
+    required: true
+
+responses:
+  200:
+    description: Bookmark details
+
+  404:
+    description: Bookmark was not found

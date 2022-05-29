@@ -70,6 +70,7 @@ def handle_bookmark():
         return (jsonify({'data':data, 'meta':meta}), HTTPStatus.OK)
 
 @bookmarks.get("/<int:id>")
+@swag_from("./docs/bookmarks/bookmark.yml")
 @jwt_required()
 def get_bookmark(id):
     current_user = get_jwt_identity()
