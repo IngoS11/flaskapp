@@ -7,7 +7,6 @@ parameters:
     in: path
     type: int
     required: true
-
 responses:
   200:
     description: Bookmark details
