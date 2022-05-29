@@ -16,6 +16,11 @@ services:
     volumes:
       - ..:/workspace:cached
 
+    environment:
+      PGUSER: flaskapp
+      PGDATABASE: flaskapp
+      PGHOST: db
+
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
 
