@@ -1,6 +1,5 @@
 import validators
 from flask import Blueprint, jsonify, request
-from werkzeug.security import check_password_hash, generate_password_hash
 from http import HTTPStatus
 from app.database import db, User
 from flask_jwt_extended import jwt_required, create_access_token, create_refresh_token, get_jwt_identity
@@ -35,10 +34,8 @@ def register():
         return (jsonify({'error': "Email is already taken"}),
         HTTPStatus.CONFLICT)
 
-    pwd_hash = generate_password_hash(password)
-    
     # add user to the database
-    user=User(username,email,pwd_hash)
+    user=User(username, email, password)
     db.session.add(user)
     db.session.commit()
 
@@ -56,11 +53,15 @@ def register():
 def login():
     email = request.json.get('email', '')
     password = request.json.get('password', '')
+    username = request.json.get('username', '')
 
-    user=User.query.filter_by(email=email).first()
+    if email:
+        user=User.query.filter_by(email=email).first()
+    else:
+        user=User.query.filter_by(username=username).first()
 
     if user:
-        is_pass_correct = check_password_hash(user.password, password)
+        is_pass_correct = user.check_password(password)
         
         if is_pass_correct:
             refresh = create_refresh_token(identity=user.id)

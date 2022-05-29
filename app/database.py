@@ -1,8 +1,9 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
-from datetime import datetime
 import string
 import random
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
+from werkzeug.security import check_password_hash, generate_password_hash
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -19,10 +20,14 @@ class User(db.Model):
     def __init__(self, username, email, password):
         self.username = username
         self.email = email
-        self.password = password
+        self.password = generate_password_hash(password)
 
     def __repr__(self) -> str:
         return f'User>>> {self.username} Email>>> {self.email}'
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+        
 
 class Bookmark(db.Model):
     __tablename__ = 'bookmarks'
