@@ -12,3 +12,6 @@ The application can then be started with
 ```
 > flask run
 ```
+
+## Deployment on Kubernetes
+To deploy on Kubernetes follow the instructions in [manifests/README.md](manifests/README.md)

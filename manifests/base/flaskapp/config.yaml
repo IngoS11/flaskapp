@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: flaskapp-config
 data:
-  database-url: acid-flaskdb
+  database-svc: flask-db
   database-name: flaskapp
