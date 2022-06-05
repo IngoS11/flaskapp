@@ -7,7 +7,7 @@ Visual Sutdio code and initialize the database running
 flask db reset
 ```
 
-## Start Flask Applicationç
+## Start Flask Application
 The application can then be started with
 ```
 > flask run
