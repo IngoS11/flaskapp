@@ -1,5 +1,5 @@
 .env
 **/__pycache__
 **/bookmarks.db
-**/manifests/*-secret.yaml
+**/*-secret.yaml
 
