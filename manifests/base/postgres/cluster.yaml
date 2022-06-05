@@ -1,0 +1,22 @@
+kind: "postgresql"
+apiVersion: "acid.zalan.do/v1"
+
+metadata:
+  name: "flask-db"
+  namespace: "default"
+  labels:
+    team: flask
+
+spec:
+  teamId: "flask"
+  postgresql:
+    version: "14"
+  volume:
+    size: "1Gi"
+  numberOfInstances: 2
+  users:
+    flaskapp:
+    - superuser
+    - createdb
+  databases:
+    flaskapp: flaskapp 

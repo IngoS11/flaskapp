@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flaskapp-config
+data:
+  database-url: acid-flaskdb
+  database-name: flaskapp

@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flaskapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flaskapp
+  template:
+    metadata:
+      labels:
+        app: flaskapp
+    spec:
+      containers:
+      - name: flaskapp
+        image: flaskapp
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5002
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: flaskapp.flask-db.credentials.postgresql.acid.zalan.do
+              key: username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: flaskapp.flask-db.credentials.postgresql.acid.zalan.do
+              key: password
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: flaskapp-config
+              key: database-name
+        - name: POSTGRES_SVC
+          valueFrom:
+            configMapKeyRef:
+              name: flaskapp-config
+              key: database-url
+        - name: SQLALCHEMY_DATABASE_URI
+          value: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@\
+              $(POSTGRES_SVC):$(FLASK_DB_SERVICE_PORT_POSTGRESQL)/$(POSTGRES_DB)"
+        - name: JWT_SECRET_KEY
+          valueFrom:
+             secretKeyRef:
+               name: flaskapp-secret
+               key: jwt-secret-key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flaskapp
+spec:
+  selector:
+    app: flaskapp
+  type: LoadBalancer
+  ports:
+  - port: 5002
+    targetPort: 5002
+    nodePort: 30000
