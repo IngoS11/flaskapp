@@ -15,7 +15,7 @@ spec:
       containers:
       - name: flaskapp
         image: ghcr.io/ingos11/flaskapp:main
-        imagePullPolicy: Never
+ #       imagePullPolicy: Never
         ports:
         - containerPort: 5002
         env:
