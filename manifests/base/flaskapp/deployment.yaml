@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: flaskapp
-        image: flaskapp
+        image: ingos11/flaskapp:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 5002
