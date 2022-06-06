@@ -13,12 +13,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout Code
+      uses: actions/checkout@v3
     - name: Login to DockerHub
+      uses: docker/login-action@v1
       with:
         username: ${{ secrets.DOCKERHUB_USER }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}  
-    - name: Build and Push the Docker image
+    - name: Build and Push the image to Docker Hub
       uses: docker/build-push-action@v2
       with:
         context: .
