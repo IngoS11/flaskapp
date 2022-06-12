@@ -1,32 +1,28 @@
-
 template = {
   "swagger": "2.0",
   "info": {
     "title": "Bookmark Application API",
-    "description": "API for the bookmark demo application",
-    "contact": {
-      "responsibleOrganization": "",
-      "responsibleDeveloper": "",
-      "email": "",
-      "url": "",
-    },
-    "termsOfService": "",
-    "version": "0.0.1"
+    "version": "0.02",
   },
   "basePath": "/api/v1",  # base bash for blueprint registration
   "schemes": [
     "http",
-    "https"
+    "https",
   ],
   "securityDefinitions": {
         "Bearer": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header",
-            "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+            "description": "JWT Authorization header \"Authorization: Bearer {token}\"",
         }
   },
-  "operationId": "getmyData"
+  "consumes": [
+      "application/json",
+  ],
+  "produces": [
+      "application/json",
+  ],
 }
 
 swagger_config = {
@@ -41,5 +37,5 @@ swagger_config = {
     ],
     "static_url_path": "/flasgger_static",
     "swagger_ui": True,
-    "specs_route": "/"
+    "specs_route": "/",
 }

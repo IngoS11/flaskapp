@@ -5,11 +5,47 @@ from app.database import db, User
 from flask_jwt_extended import jwt_required, create_access_token, create_refresh_token, get_jwt_identity
 from flasgger import swag_from
 
-auth = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
+user = Blueprint("user", __name__, url_prefix="/api/v1/user")
 
-@auth.post('/register')
-@swag_from('./docs/auth/register.yml')
+@user.post('/register')
 def register():
+    """
+    Register a new user
+    ---
+    tags:
+      - User
+    parameters:
+      - name: body
+        description: The body should contain the username email and password
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - "username"
+            - "email"
+            - "password"
+          properties:
+            username:
+              type: "string"
+              example: "Maria1234"
+            email:
+              type: "email"
+              example: "user@gmail.com"
+            password:
+              type: "string"
+              format: password
+              example: "********"
+    responses:
+      200:
+        description: When a user successfully logs in
+
+      400:
+        description: User fails to register due to bad request data
+
+      409:
+        description: The user or the email already exists in the system
+    """
     username = request.json['username']
     email = request.json['email']
     password = request.json['password']
@@ -48,9 +84,40 @@ def register():
     }), HTTPStatus.CREATED
 
 
-@auth.post("/login")
-@swag_from('./docs/auth/login.yml')
+@user.post("/login")
 def login():
+    """
+    Authenticate a user
+    ---
+    tags:
+      - User
+    description: Authenticate user with a password
+    parameters:
+      - name: body
+        description: The body contains the user login data in json format
+        in: body
+        required: true
+        schema:
+            type: object
+            required:
+              - "email"
+              - "password"
+            properties:
+              email:
+                type: "email"
+                example: "peter@neverland.org"
+              password:
+                type: "string"
+                format: password
+                example: "abcd1234"
+    responses:
+      200:
+        description: User successfully logged in
+      400:
+        description: User login failed
+      401:
+        description: Incorrect credentials supplied
+    """
     email = request.json.get('email', '')
     password = request.json.get('password', '')
     username = request.json.get('username', '')
@@ -84,19 +151,55 @@ def login():
         'error':"Authentication failed"
     }), HTTPStatus.UNAUTHORIZED)
 
-@auth.get("/whoami")
+@user.get("/whoami")
 @jwt_required()
 def whoami():
+    """
+    Returns the information for the current user
+    ---
+    tags:
+      - User
+    description: Returns the information for the currently logged in user
+    responses:
+      200:
+        description: Userinformation
+        schema:
+          type: object
+          properties:
+            username:
+              type: "string"
+            email:
+              type: "string"
+      401:
+        description: Incorrect credentials supplied
+    security:
+      - Bearer: [] 
+    """
     user_id = get_jwt_identity()
     user = User.query.filter_by(id=user_id).first()
     return (jsonify({
         'username': user.username,
         'email': user.email
     }), HTTPStatus.OK)
+    
 
-@auth.get('/token/refresh')
+@user.get('/token/refresh')
 @jwt_required(refresh=True)
 def refresh_user_token():
+    """
+    Returns the information for the current user
+    ---
+    tags:
+      - User
+    description: Returns the information for the currently logged in user
+    responses:
+      200:
+        description: Refres the JWT Token using the refresh token supplied during login
+      401:
+        description: Incorrect credentials supplied
+    security:
+      - Bearer: [] 
+    """
     identity = get_jwt_identity()
     access = create_access_token(identity=identity)
 

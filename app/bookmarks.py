@@ -10,6 +10,37 @@ bookmarks = Blueprint("bookmarks", __name__, url_prefix="/api/v1/bookmarks")
 @bookmarks.route('/', methods=['GET', 'POST'])
 @jwt_required()
 def handle_bookmark():
+    """
+    Create a bookmark
+    ---
+    tags:
+      - Bookmarks
+    description: Create a new bookmark
+    parameters:
+      - name: body
+        description: The body contains the user login data in json format
+        in: body
+        required: true
+        schema:
+            type: object
+            required:
+              - "body"
+              - "url"
+            properties:
+              body:
+                type: "String"
+                example: "Bookmark to the Google Website"
+              url:
+                type: "string"
+                example: "https://google.com"
+    responses:
+      201:
+        description: Bookmark successfully created
+      401:
+        description: Incorrect credentials supplied
+    security:
+      - Bearer: [] 
+    """    
     current_user = get_jwt_identity()
     
     if request.method == 'POST':
@@ -70,9 +101,27 @@ def handle_bookmark():
         return (jsonify({'data':data, 'meta':meta}), HTTPStatus.OK)
 
 @bookmarks.get("/<int:id>")
-#@swag_from("./docs/bookmarks/bookmark.yml")
 @jwt_required()
 def get_bookmark(id):
+    """
+    Bookmark details
+    ---
+    tags:
+      - Bookmarks
+    description: Show details for a bookmark
+    parameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+    responses:
+      201:
+        description: Bookmark successfully created
+      401:
+        description: Incorrect credentials supplied
+    security:
+      - Bearer: [] 
+    """    
     current_user = get_jwt_identity()
 
     bookmark = Bookmark.query.filter_by(
@@ -95,6 +144,36 @@ def get_bookmark(id):
 @bookmarks.patch("/<int:id>")
 @jwt_required()
 def update_bookmark(id):
+    """
+    Update a bookmark
+    ---
+    tags:
+      - Bookmarks
+    description: Update a bookmark
+    parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+      - name: body
+        description: The body contains the bookmark details in json format
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - "body"
+            - "url"
+          properties:
+            body:
+              type: "String"
+              example: "Bookmark to the Google Website"
+            url:
+              type: "string"
+              example: "https://google.com"
+    security:
+      - Bearer: [] 
+    """
     current_user = get_jwt_identity()
 
     bookmark = Bookmark.query.filter_by(
@@ -129,6 +208,21 @@ def update_bookmark(id):
 @bookmarks.delete("/<int:id>")
 @jwt_required()
 def delete_bookmark(id):
+    """
+    Delete a bookmark
+    ---
+    tags:
+      - Bookmarks
+    description: Delete a bookmark
+    parameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+    security:
+      - Bearer: []    
+    """
+    
     current_user = get_jwt_identity()
 
     bookmark = Bookmark.query.filter_by(
@@ -145,6 +239,22 @@ def delete_bookmark(id):
 @bookmarks.get("/stats")
 @jwt_required()
 def get_stats():
+    """
+    Bookmark Statistics
+    ---
+    tags:
+      - Bookmarks
+    description: Statistics for all bookmarks of the current user
+    responses:
+      200:
+        description: User successfully logged in
+      400:
+        description: User login failed
+      401:
+        description: Incorrect credentials supplied
+    security:
+      - Bearer: [] 
+    """
     current_user = get_jwt_identity()
 
     data = []
