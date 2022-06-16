@@ -5,5 +5,7 @@ resources:
 - flaskapp/config.yaml
 - flaskapp/secret.yaml
 - flaskapp/deployment.yaml
+- vuejsui/config.yaml
+- vuejsui/deployment.yaml
 patchesStrategicMerge:
 - flaskapp-secret.yaml

@@ -8,12 +8,24 @@ on:
 
 jobs:
 
-  build-and-push:
+  build-and-push-images:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dockerfile: ./Dockerfile
+            image: ghcr.io/ingos11/flaskapp
+          - dockerfile: ./ui/Dockerfile
+            image: ghcr.io/ingos11/vuejsui
+    permissions:
+      contents: read
+      packages: write
+        
     steps:
-    - name: Checkout Code
+    - name: Checkout Repository
       uses: actions/checkout@v3
       
     - name: Login to DockerHub
@@ -29,34 +41,17 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Extract metadata (tags, labels) for Docker
+    - name: Extract metadata (tags, labels) for python container from Docker
       id: meta
       uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
       with:
-        images: |
-          ingos11/flaskapp
-          ghcr.io/${{ github.repository }}
+        images: ${{ matrix.image }}
 
     - name: Build and Push the python image to Docker Hub
       uses: docker/build-push-action@v2
       with:
         context: .
-        push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
-
-    - name: Extract metadata (tags, labels) for Docker
-      id: meta
-      uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-      with:
-        images: |
-          ingos11/vuejsui
-          ghcr.io/${{ github.repository }}-ui
-
-    - name: Build and Push the python image to Docker Hub
-      uses: docker/build-push-action@v2
-      with:
-        context: .
+        file: ${{ matrix.dockerfile }}
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}

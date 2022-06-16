@@ -14,6 +14,5 @@ RUN npm run build
 # Build production container containing only the distribution
 # The container can be used in a pod together with NGINX or
 # Apache
-FROM scratch
-WORKDIR /app
-COPY --from=build /app/dist/ /app/
+FROM nginx:stable-alpine
+COPY --from=build /app/dist/ /usr/share/nginx/html
