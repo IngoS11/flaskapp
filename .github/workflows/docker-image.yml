@@ -8,6 +8,24 @@ on:
 
 jobs:
 
+  build-nodejs:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: cpm run build --if-present
+    - run: npm test
+
   build-and-push-images:
 
     runs-on: ubuntu-latest
@@ -18,8 +36,8 @@ jobs:
         include:
           - dockerfile: ./Dockerfile
             image: ghcr.io/ingos11/flaskapp
-          - dockerfile: ./ui/Dockerfile
-            image: ghcr.io/ingos11/vuejsui
+#          - dockerfile: ./ui/Dockerfile
+#            image: ghcr.io/ingos11/vuejsui
     permissions:
       contents: read
       packages: write
