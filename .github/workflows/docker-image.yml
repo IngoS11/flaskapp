@@ -8,25 +8,56 @@ on:
 
 jobs:
 
-  build-nodejs:
+  build-and-push-vuejsui:
+
     runs-on: ubuntu-latest
     
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
+        include:
+          - dockerfile: ui/Dockerfile
+            image: ghcr.io/ingos11/vuejsui
+
+    permissions:
+      contents: read
+      packages: write
 
     steps:
     - uses: actions/checkout@v3
-    - name: use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+    - uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '16.x'
         cache: 'npm'
+        cache-dependency-path: './ui/package-lock.json'
     - run: npm ci
-    - run: cpm run build --if-present
-    - run: npm test
+      working-directory: ui
+    - run: npm run build --if-present
+      working-directory: ui
 
-  build-and-push-images:
+    - name: Log in to the Container registry
+      uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata (tags, labels) for vuejsui container from Docker
+      id: meta
+      uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+      with:
+        images: ${{ matrix.image }}
+
+    - name: Build and Push the vuejsui image to registry
+      uses: docker/build-push-action@v2
+      with:
+        context: ui/.
+        file: ${{ matrix.dockerfile }}
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+
+  build-and-push-flaskapp:
 
     runs-on: ubuntu-latest
 
@@ -36,8 +67,7 @@ jobs:
         include:
           - dockerfile: ./Dockerfile
             image: ghcr.io/ingos11/flaskapp
-#          - dockerfile: ./ui/Dockerfile
-#            image: ghcr.io/ingos11/vuejsui
+
     permissions:
       contents: read
       packages: write
@@ -45,12 +75,6 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
-      
-    - name: Login to DockerHub
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKERHUB_USER }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Log in to the Container registry
       uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
@@ -65,7 +89,7 @@ jobs:
       with:
         images: ${{ matrix.image }}
 
-    - name: Build and Push the python image to Docker Hub
+    - name: Build and Push the python image to registry
       uses: docker/build-push-action@v2
       with:
         context: .
